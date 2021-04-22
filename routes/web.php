@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,7 @@ use App\Http\Controllers\Auth\LoginController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts.app');
 });
 
 Auth::routes();
@@ -24,5 +26,7 @@ Route::get('/login/google', [LoginController::class, 'redirectToGoogle'])->name(
 Route::get('/login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/login/google/classroom', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
+    Route::get('/login/google/classroom/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
 });

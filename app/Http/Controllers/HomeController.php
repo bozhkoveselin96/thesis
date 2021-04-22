@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Google_Service_Classroom;
+use App\Services\GoogleClassroomService;
+use Illuminate\Contracts\Support\Renderable;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class HomeController extends Controller
 {
@@ -19,10 +22,31 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function index()
     {
         return view('home');
+    }
+
+    /**
+     * Redirect the user to the Google Classroom authentication page.
+     *
+     * @return RedirectResponse
+     */
+    public function redirectToGoogleClassroom(): RedirectResponse
+    {
+        $service = new GoogleClassroomService();
+        $googleClient = $service->getClient();
+        return redirect($googleClient->createAuthUrl());
+    }
+
+    /**
+     * Obtain the information from Google Classroom
+     *
+     * @throws \Exception
+     */
+    public function handleGoogleClassroomCallback()
+    {
     }
 }
