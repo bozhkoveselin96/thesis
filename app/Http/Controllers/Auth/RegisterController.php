@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Allow;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Laravel\Socialite\Contracts\User as GoogleUser;
 
 class RegisterController extends Controller
 {
@@ -52,22 +53,35 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
-     * @return \App\Models\User
+     * @param  GoogleUser $user
+     * @return User
+     *
      */
-    protected function create(array $data)
+    public function create(GoogleUser $user): User
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $fields = [
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'avatar' => $user->getAvatar(),
+            'google_provider_id' => $user->getId()
+        ];
+
+        if ($user->getEmail() === config('auth.defaults.admin_email')) {
+            $fields['is_admin'] = true;
+        }
+
+        \DB::transaction(function () use ($fields) {
+            User::create($fields);
+            Allow::where('email', $fields['email'])
+                ->update(['used' => true]);
+        });
+
+        return User::where('email', $user->getEmail())->first();
     }
 }

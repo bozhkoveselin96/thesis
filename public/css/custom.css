@@ -1,0 +1,68 @@
+.avatar {
+    border-radius: 5px;
+    width: 40px;
+    height: auto;
+    float:left;
+    margin-right: 10px;
+}
+
+.vertical-center {
+    display: table-cell;
+    vertical-align: middle !important;
+}
+
+.btn-size {
+    width: 100px;
+}
+
+.fa-times-circle, .fa-user-times {
+    color: #dc3545;
+    display: table;
+    margin: 0 auto;
+}
+
+.fa-check-circle, .fa-user {
+    color: #28a745;
+    display: table;
+    margin: 0 auto;
+}
+
+#used-th {
+    text-align: center;
+}
+
+.danger-color {
+    color: #dc3545;
+}
+
+.primary-color {
+    color: #007bff;
+}
+
+.success-color {
+    color: #28a745;
+}
+
+.pagination-center {
+    width: max-content;
+    margin: auto;
+}
+
+.is-breakable {
+    word-break: break-word;
+}
+
+#card-header-emails {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media only screen and (max-width: 1200px) {
+    .approved-email {
+        color: #28a745;
+    }
+
+    .blocked-email {
+        color: #dc3545;
+    }
+}

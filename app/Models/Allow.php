@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Allow extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+
+    protected $table = 'allowed_emails';
 
     /**
      * The attributes that are mass assignable.
@@ -16,12 +17,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
         'email',
-        'avatar',
-        'blocked',
-        'is_admin',
-        'google_provider_id',
+        'used',
     ];
 
     /**
@@ -30,7 +27,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'is_admin' => 'boolean',
-        'blocked' => 'boolean',
+        'used' => 'boolean',
     ];
 }

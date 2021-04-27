@@ -12,12 +12,25 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
+    @if(Auth::user() && Auth::user()->is_admin)
+        <script type="text/javascript" src="{{ asset('js/admin/adminEmails.js') }}" defer></script>
+        <script type="text/javascript" src="{{ asset('js/admin/adminTeachers.js') }}" defer></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/exacti/floating-labels@latest/floating-labels.min.css" media="screen">
+    @endif
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+
+    <!-- Toastr css -->
+    <link rel="stylesheet" href="http://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
 </head>
 <body>
     <div id="app">
@@ -47,13 +60,16 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" style="border-radius: 5px; width: 40px; height: auto;float:left; margin-right: 10px;">
+                                <img class="avatar" src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}">
 
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
-
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    @if (Auth::user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('admin.teachers') }}">{{ __('View teachers') }}</a>
+                                        <a class="dropdown-item" href="{{ route('admin.emails') }}">{{ __('Allowed emails') }}</a>
+                                    @endif
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -77,10 +93,12 @@
 
         <main class="py-4">
             @yield('content')
-            @auth
-                <a href="{{ route('login.google.classroom') }}" class="btn badge-dark">Login classroom</a>
-            @endauth
         </main>
     </div>
+
+    <!-- Toastr js -->
+    <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+    {!! Toastr::message() !!}
 </body>
 </html>

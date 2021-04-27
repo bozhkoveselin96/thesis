@@ -16,6 +16,13 @@
 
                     {{ __('You are logged in!') }}
                 </div>
+                @auth
+                    <div>
+                        <a href="{{ route('login.google.classroom') }}" class="btn btn-success">
+                            Connect the Google Classroom
+                        </a>
+                    </div>
+                @endauth
             </div>
         </div>
     </div>

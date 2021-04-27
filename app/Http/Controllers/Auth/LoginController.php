@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use App\Models\Allow;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Laravel\Socialite\Contracts\User as GoogleUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Illuminate\Http\RedirectResponse as RedirectResponseToApp;
 
@@ -55,31 +58,42 @@ class LoginController extends Controller
     }
 
     /**
-     * Obtain the user information from Google
+     * Obtain the user information from Google.
      *
-     * @return RedirectResponseToApp
+     * @return string
      */
-    public function handleGoogleCallback(): RedirectResponseToApp
+    public function handleGoogleCallback(): string
     {
         $user = Socialite::driver('google')->user();
-        $this->registerOrLoginUser($user);
-
-        // Return home after login
-        return redirect()->route('home');
-    }
-
-    protected function registerOrLoginUser($data)
-    {
-        $user = User::where('email', '=', $data->email)->first();
-        if (!$user) {
-            $user = new User();
-            $user->name = $data->name;
-            $user->email = $data->email;
-            $user->google_provider_id = $data->id;
-            $user->avatar = $data->avatar;
-            $user->save();
+        if ($this->registerOrLoginUser($user)) {
+            // Return home after login.
+            Toastr::success('Congratulations, ' . $user->getName() . '. You have successfully entered our application.', 'Success', ["positionClass" => "toast-top-right"]);
+            return redirect()->route('home');
         }
-
-        Auth::login($user);
+        Toastr::error('You are not allowed to enter!', 'Error', ["positionClass" => "toast-top-right"]);
+        return redirect()->route('main');
     }
+
+    /**
+     * Login or register depending on whether there is such a user in the database.
+     *
+     * @param GoogleUser $user
+     * @return boolean
+     */
+    private function registerOrLoginUser(GoogleUser $user): bool
+    {
+        $teacher = User::where('email', '=', $user->getEmail())->first();
+        if (!$teacher) {
+            if (!Allow::where('email', '=' ,$user->getEmail())->first()) {
+                return false;
+            }
+            $registerController = new RegisterController();
+            $teacher = $registerController->create($user);
+        } elseif ($teacher->blocked) {
+            return false;
+        }
+        Auth::login($teacher);
+        return true;
+    }
+
 }
