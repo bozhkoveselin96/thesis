@@ -22,29 +22,28 @@ Route::get('/', function () {
     return view('layouts.app');
 })->name('main');
 
-//Route::get('/google39e5616ff1a55b3d.html', function () {
-//    return view('google');
-//});
-
 Auth::routes();
 
-Route::get('/login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('/login/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::prefix('login/google')->group(function () {
+    Route::get('/', [LoginController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('/callback', [LoginController::class, 'handleGoogleCallback']);
+});
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/login/google/classroom', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
-    Route::get('/login/google/classroom/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
+    Route::prefix('login/google/classroom')->group(function () {
+        Route::get('/', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
+        Route::get('/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
+    });
 
     Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
-        Route::get('/teachers', [UserController::class, 'index'])->name('admin.teachers');
-        Route::put('/block/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
-        Route::put('/unblock/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+        Route::prefix('teacher')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('admin.teacher.index');
+            Route::put('/block/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+            Route::put('/unblock/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+        });
 
-        Route::get('/email/list', [AdminController::class, 'index'])->name('admin.emails');
-        Route::post('/email', [AdminController::class, 'creteEmail']);
-        Route::put('/email/{email}', [AdminController::class, 'updateEmail']);
-        Route::delete('/email/{email}', [AdminController::class, 'destroy']);
+        Route::resource('email', AdminController::class);
     });
 });
 

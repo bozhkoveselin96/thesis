@@ -58,7 +58,7 @@
 }
 
 @media only screen and (max-width: 1200px) {
-    .approved-email {
+    .unblocked-email {
         color: #28a745;
     }
 

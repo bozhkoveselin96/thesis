@@ -67,8 +67,8 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     @if (Auth::user()->is_admin)
-                                        <a class="dropdown-item" href="{{ route('admin.teachers') }}">{{ __('View teachers') }}</a>
-                                        <a class="dropdown-item" href="{{ route('admin.emails') }}">{{ __('Allowed emails') }}</a>
+                                        <a class="dropdown-item" href="{{ route('admin.teacher.index') }}">{{ __('View teachers') }}</a>
+                                        <a class="dropdown-item" href="{{ route('email.index') }}">{{ __('Allowed emails') }}</a>
                                     @endif
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();

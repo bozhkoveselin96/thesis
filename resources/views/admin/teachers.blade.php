@@ -26,9 +26,9 @@
                                         <th class="vertical-center d-none d-xl-table-cell" scope="row">{{ $index + $users->firstItem() }}</th>
                                         <td class="vertical-center d-none d-md-table-cell">{{ $teacher->name }}</td>
                                         @if(!$teacher->blocked)
-                                            <td id="email-{{ $teacher->id }}" class="vertical-center is-breakable approved-email">{{ $teacher->email }}</td>
+                                            <td id="email-{{ $teacher->id }}" class="vertical-center is-breakable unblocked-email">{{ $teacher->email }}</td>
                                         @else
-                                            <td class="vertical-center is-breakable blocked-email">{{ $teacher->email }}</td>
+                                            <td id="email-{{ $teacher->id }}" class="vertical-center is-breakable blocked-email">{{ $teacher->email }}</td>
                                         @endif
                                         <td class="vertical-center d-none d-xl-table-cell"><img class="avatar" src="{{ $teacher->avatar }}" alt=""></td>
                                         <td class="vertical-center d-none d-xl-table-cell">
@@ -47,7 +47,7 @@
                                                 </button>
                                             @else
                                                 <button id="current-value-{{ $teacher->id }}"
-                                                        class="btn btn-outline-danger btn-size"
+                                                        class="btn btn-outline-success btn-size"
                                                         onclick="blockOrUnblock({{ $teacher->id }})"
                                                         value="unblock">UNBLOCK
                                                 </button>

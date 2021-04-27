@@ -97,7 +97,6 @@
             </div>
         </div>
 
-
         <!-- Remove modal -->
         <div class="modal fade" id="remove-modal" tabindex="-1" role="dialog" aria-labelledby="remove-modal-label" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -118,6 +117,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
