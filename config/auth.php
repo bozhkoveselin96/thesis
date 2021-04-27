@@ -16,6 +16,7 @@ return [
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
+        'admin_email' => env('ADMIN_EMAIL', 'veselin.bozhkov.dev@gmail.com'),
     ],
 
     /*
