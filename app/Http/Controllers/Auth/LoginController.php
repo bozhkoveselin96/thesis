@@ -82,9 +82,9 @@ class LoginController extends Controller
      */
     private function registerOrLoginUser(GoogleUser $user): bool
     {
-        $teacher = User::where('email', '=', $user->getEmail())->first();
+        $teacher = User::where('email', $user->getEmail())->first();
         if (!$teacher) {
-            if (!Allow::where('email', '=' ,$user->getEmail())->first()) {
+            if (!Allow::where('email', $user->getEmail())->first()) {
                 return false;
             }
             $registerController = new RegisterController();

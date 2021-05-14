@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\Auth\LoginController;
 
 
@@ -31,9 +32,15 @@ Route::prefix('login/google')->group(function () {
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
     Route::prefix('login/google/classroom')->group(function () {
         Route::get('/', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
         Route::get('/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
+    });
+
+    Route::group(['middleware' => 'connected', 'prefix' => 'classroom'], function () {
+        Route::get('/courses', [ClassroomController::class, 'courses'])->name('classroom.courses');
+        Route::get('/students/{courseId}', [ClassroomController::class, 'students'])->name('classroom.students');
     });
 
     Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {

@@ -31,16 +31,24 @@
     text-align: center;
 }
 
-.danger-color {
+.danger-color, .SUSPENDED {
     color: #dc3545;
 }
 
-.primary-color {
+.primary-color, .ARCHIVED {
     color: #007bff;
 }
 
-.success-color {
+.success-color, .ACTIVE {
     color: #28a745;
+}
+
+.DECLINED {
+    color: #ffc107;
+}
+
+.PROVISIONED {
+    color: #17a2b8;
 }
 
 .pagination-center {
@@ -55,6 +63,16 @@
 #card-header-emails {
     display: flex;
     justify-content: space-between;
+}
+
+.navbar-btn-size {
+    width: 90%;
+    margin-left: 5%;
+    margin-bottom: 5px;
+}
+
+#export-excel {
+    margin-bottom: 25px;
 }
 
 @media only screen and (max-width: 1200px) {

@@ -9,7 +9,6 @@
         "ext-json": "*",
         "brian2694/laravel-toastr": "^5.54",
         "fideloper/proxy": "^4.4",
-        "fruitcake/laravel-cors": "^2.0",
         "google/apiclient": "^2.7",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",

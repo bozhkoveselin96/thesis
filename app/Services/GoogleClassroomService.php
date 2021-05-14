@@ -1,23 +1,28 @@
 <?php
 namespace App\Services;
 
+use Exception;
 use Google_Client;
+use Illuminate\Http\Request;
 use Google_Service_Classroom;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Google\Exception as GoogleException;
 
 class GoogleClassroomService
 {
     private Google_Client $client;
 
     /**
-     * @throws \Google\Exception
-     * @throws \Exception
+     * @param Request $request
+     * @throws Exception
+     * @throws GoogleException
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
         $this->client = new Google_Client();
-        $this->client ->setApplicationName('Technical university');
-        $this->client ->setAuthConfig([
+        $this->client->setApplicationName('Technical university');
+        $this->client->setAuthConfig([
             "web" => [
                 'client_id'                     => config('services.google.client_id'),
                 'client_secret'                 => config('services.google.client_secret'),
@@ -45,19 +50,40 @@ class GoogleClassroomService
             Google_Service_Classroom::CLASSROOM_STUDENT_SUBMISSIONS_ME_READONLY,
             Google_Service_Classroom::CLASSROOM_STUDENT_SUBMISSIONS_STUDENTS_READONLY,
         ]);
-        $this->client ->setAccessType('offline');
-//        $this->client ->setPrompt('select_account consent');
+        $this->client->setAccessType('offline');
+//        $this->client->setPrompt('select_account consent');
 
         if (Auth::check()) {
-            $this->authorize();
+            $this->authorize($request);
         }
     }
 
     /**
+     * Construct and return the service object.
+     *
+     * @return Google_Service_Classroom
+     */
+    public function getClassroom(): Google_Service_Classroom
+    {
+        return new Google_Service_Classroom($this->getClient());
+    }
+
+    /**
+     * Returns Google Classroom authorization link.
+     *
+     * @return string
+     */
+    public function getAuthUrl(): string
+    {
+        return $this->getClient()->createAuthUrl();
+    }
+
+    /**
      * Returns an authorized API client.
+     *
      * @return Google_Client the authorized client object
      */
-    public function getClient(): Google_Client
+    private function getClient(): Google_Client
     {
         return $this->client;
     }
@@ -65,13 +91,13 @@ class GoogleClassroomService
     /**
      * @param string $code
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     private function getAccessToken(string $code): string
     {
         $accessToken = $this->client->fetchAccessTokenWithAuthCode($code);
         if (array_key_exists('error', $accessToken)) {
-            throw new \Exception(join(', ', $accessToken));
+            throw new Exception(join(', ', $accessToken));
         }
         return json_encode($accessToken);
     }
@@ -87,16 +113,16 @@ class GoogleClassroomService
         $this->client->setAccessToken($accessToken);
     }
 
-
     /**
      * Authorize Api client
      *
+     * @param Request $request
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
-    private function authorize(): void
+    private function authorize(Request $request): void
     {
-        $this->checkAccessTokenExists();
+        $this->checkAccessTokenExists($request);
         $this->checkAccessTokenExpired();
     }
 
@@ -104,19 +130,20 @@ class GoogleClassroomService
      * Load previously authorized token from a classroom_token property, if it is set.
      * The classroom_token property stores the user's access and refresh tokens.
      *
+     * @param Request $request
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
-    private function checkAccessTokenExists(): void
+    private function checkAccessTokenExists(Request $request): void
     {
-        if (!Auth::user()->classroom_token) {
-            if (isset($_GET['code'])) {
-                $accessToken = $this->getAccessToken($_GET['code']);
+        if (!Session::get('classroom_token')) {
+            if ($request->has('code')) {
+                $accessToken = $this->getAccessToken($request->get('code'));
                 $this->setAccessToken($accessToken);
-                Auth::user()->classroom_token = $accessToken;
+                Session::put('classroom_token', $accessToken);
             }
         } else {
-            $this->setAccessToken(Auth::user()->classroom_token);
+            $this->setAccessToken(Session::get('classroom_token'));
         }
     }
 
@@ -131,7 +158,7 @@ class GoogleClassroomService
         if ($this->client->isAccessTokenExpired() && $this->client->getRefreshToken()) {
             $accessToken = $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
             $this->setAccessToken(json_encode($accessToken));
-            Auth::user()->classroom_token = $accessToken;
+            Session::put('classroom_token', $accessToken);
         }
     }
 }
