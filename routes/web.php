@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::group(['middleware' => 'connected', 'prefix' => 'classroom'], function () {
         Route::get('/courses', [ClassroomController::class, 'courses'])->name('classroom.courses');
         Route::get('/students/{courseId}', [ClassroomController::class, 'students'])->name('classroom.students');
+        Route::get('/students/{courseId}/export', [ClassroomController::class, 'export'])->name('classroom.students.export');
     });
 
     Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {

@@ -51,7 +51,7 @@ class GoogleClassroomService
             Google_Service_Classroom::CLASSROOM_STUDENT_SUBMISSIONS_STUDENTS_READONLY,
         ]);
         $this->client->setAccessType('offline');
-//        $this->client->setPrompt('select_account consent');
+        $this->client->setPrompt('select_account consent');
 
         if (Auth::check()) {
             $this->authorize($request);
