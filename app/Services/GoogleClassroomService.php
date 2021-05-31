@@ -51,7 +51,7 @@ class GoogleClassroomService
             Google_Service_Classroom::CLASSROOM_STUDENT_SUBMISSIONS_STUDENTS_READONLY,
         ]);
         $this->client->setAccessType('offline');
-        $this->client->setPrompt('select_account consent');
+        $this->client->setLoginHint(Auth::user()->email);
 
         if (Auth::check()) {
             $this->authorize($request);
@@ -158,7 +158,7 @@ class GoogleClassroomService
         if ($this->client->isAccessTokenExpired() && $this->client->getRefreshToken()) {
             $accessToken = $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
             $this->setAccessToken(json_encode($accessToken));
-            Session::put('classroom_token', $accessToken);
+            Session::put('classroom_token', json_encode($accessToken));
         }
     }
 }

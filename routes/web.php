@@ -39,9 +39,11 @@ Route::group(['middleware' => 'auth'], function() {
     });
 
     Route::group(['middleware' => 'connected', 'prefix' => 'classroom'], function () {
-        Route::get('/courses', [ClassroomController::class, 'courses'])->name('classroom.courses');
-        Route::get('/students/{courseId}', [ClassroomController::class, 'students'])->name('classroom.students');
+        Route::get('/courses/{nextPageToken}', [ClassroomController::class, 'nextPageCourses']);
+        Route::get('/courses', [ClassroomController::class, 'firstPageCourses'])->name('classroom.courses');
         Route::get('/students/{courseId}/export', [ClassroomController::class, 'export'])->name('classroom.students.export');
+        Route::get('/students/{courseId}/{nextPageToken}', [ClassroomController::class, 'nextPageStudents']);
+        Route::get('/students/{courseId}', [ClassroomController::class, 'firstPageStudents'])->name('classroom.students');
     });
 
     Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {

@@ -1,4 +1,7 @@
-<table class="table" id="email-allowed-table">
+<table class="table" id="courses-table">
+    <input type="hidden" id="courses-next-page-token" value={{ $nextPageToken }}>
+    <input type="hidden" id="courses-first-page-token" value={{ $nextPageToken }}>
+    <input type="hidden" id="count-courses" value="{{ count($courses) }}">
     <thead>
     <tr>
         <th scope="col" class="d-none d-xl-table-cell">#</th>
