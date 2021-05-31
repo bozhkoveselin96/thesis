@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Google_Service_Classroom;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use App\Services\GoogleClassroomService;
+use Google\Exception as GoogleException;
 use Illuminate\Contracts\Support\Renderable;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -32,22 +34,26 @@ class HomeController extends Controller
     /**
      * Redirect the user to the Google Classroom authentication page.
      *
+     * @param Request $request
      * @return RedirectResponse
+     * @throws GoogleException
      */
-    public function redirectToGoogleClassroom(): RedirectResponse
+    public function redirectToGoogleClassroom(Request $request): RedirectResponse
     {
-        $service = new GoogleClassroomService();
-        $googleClient = $service->getClient();
-        return redirect($googleClient->createAuthUrl());
+        $service = new GoogleClassroomService($request);
+        return redirect($service->getAuthUrl());
     }
 
     /**
-     * Obtain the information from Google Classroom
+     * Handle Google Classroom callback.
      *
-     * @throws \Exception
+     * @param Request $request
+     * @throws GoogleException
      */
-    public function handleGoogleClassroomCallback()
+    public function handleGoogleClassroomCallback(Request $request)
     {
-//        TODO: features/google-api -> the next step after connecting to Google Classroom
+        Session::put('connected_with_classroom', true);
+        new GoogleClassroomService($request);
+        return redirect(route('classroom.courses'));
     }
 }

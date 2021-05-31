@@ -33,7 +33,7 @@ class AdminController extends Controller
      */
     public function store(StoreEmailRequest $request): EmailResource
     {
-        $email = Allow::create($request->only('email'));
+        $email = Allow::create($request->validated());
         return new EmailResource($email);
     }
 
@@ -46,7 +46,7 @@ class AdminController extends Controller
      */
     public function update(Allow $email, StoreEmailRequest $request): EmailResource
     {
-        $email->update($request->only('email'));
+        $email->update($request->validated());
         return new EmailResource($email);
     }
 
@@ -81,7 +81,7 @@ class AdminController extends Controller
 
     public function blockOrUnblockTeacher(User $teacher, TeacherAccessRequest $request): UserResource
     {
-        $teacher->update($request->only('blocked'));
+        $teacher->update($request->validated());
         return new UserResource($teacher);
     }
 }
