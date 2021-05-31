@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\Auth\LoginController;
 
 
@@ -22,29 +23,37 @@ Route::get('/', function () {
     return view('layouts.app');
 })->name('main');
 
-//Route::get('/google39e5616ff1a55b3d.html', function () {
-//    return view('google');
-//});
-
 Auth::routes();
 
-Route::get('/login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('/login/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::prefix('login/google')->group(function () {
+    Route::get('/', [LoginController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('/callback', [LoginController::class, 'handleGoogleCallback']);
+});
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/login/google/classroom', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
-    Route::get('/login/google/classroom/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
+
+    Route::prefix('login/google/classroom')->group(function () {
+        Route::get('/', [HomeController::class, 'redirectToGoogleClassroom'])->name('login.google.classroom');
+        Route::get('/callback', [HomeController::class, 'handleGoogleClassroomCallback']);
+    });
+
+    Route::group(['middleware' => 'connected', 'prefix' => 'classroom'], function () {
+        Route::get('/courses/{nextPageToken}', [ClassroomController::class, 'nextPageCourses']);
+        Route::get('/courses', [ClassroomController::class, 'firstPageCourses'])->name('classroom.courses');
+        Route::get('/students/{courseId}/export', [ClassroomController::class, 'export'])->name('classroom.students.export');
+        Route::get('/students/{courseId}/{nextPageToken}', [ClassroomController::class, 'nextPageStudents']);
+        Route::get('/students/{courseId}', [ClassroomController::class, 'firstPageStudents'])->name('classroom.students');
+    });
 
     Route::group(['middleware' => 'admin', 'prefix' => 'admin'], function() {
-        Route::get('/teachers', [UserController::class, 'index'])->name('admin.teachers');
-        Route::put('/block/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
-        Route::put('/unblock/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+        Route::prefix('teacher')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('admin.teacher.index');
+            Route::put('/block/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+            Route::put('/unblock/{teacher}', [AdminController::class, 'blockOrUnblockTeacher']);
+        });
 
-        Route::get('/email/list', [AdminController::class, 'index'])->name('admin.emails');
-        Route::post('/email', [AdminController::class, 'creteEmail']);
-        Route::put('/email/{email}', [AdminController::class, 'updateEmail']);
-        Route::delete('/email/{email}', [AdminController::class, 'destroy']);
+        Route::resource('email', AdminController::class);
     });
 });
 

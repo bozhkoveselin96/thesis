@@ -36,6 +36,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT'),
         'project_id' => env('GOOGLE_PROJECT_ID'),
         'redirect_classroom' => env('GOOGLE_CLASSROOM_REDIRECT'),
+        'classroom_target_topic_name' => env('', 'Реферати'),
+        'classroom_max_user_per_page' => env('', 30),
+        'classroom_course_work_correct_description' => env('', 4),
     ],
 
 ];

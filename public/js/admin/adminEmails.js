@@ -31,7 +31,7 @@ function openModal(modal, id = null) {
             $('#remove-modal').modal('show');
             $('#remove-modal-body').text(`Are you sure you want to remove ${ currentEmail } ?`);
             $('#remove').click(function () {
-                removeTeacher(id, currentEmail);
+                removeTeacher(id);
             });
             break;
     }
@@ -39,22 +39,21 @@ function openModal(modal, id = null) {
 
 function createOrUpdateEmail(id, newEmail, oldEmail, createOrUpdate) {
     let type;
-    let route;
+    let url = location.pathname;
     switch (createOrUpdate) {
         case 'create':
             type = 'POST';
-            route = location.href.replace('/list', '');
             break;
         case 'update':
             type = 'PUT';
-            route = location.href.replace('list', id);
+            url += `/${ id }`;
             break;
         default:
             toastr.error('Bad request');
     }
 
     $.ajax({
-        url: route,
+        url: url,
         type: type,
         data: JSON.stringify({ email: newEmail }),
         dataType: 'json',
@@ -81,10 +80,9 @@ function createOrUpdateEmail(id, newEmail, oldEmail, createOrUpdate) {
     });
 }
 
-function removeTeacher(id, email) {
-    let route = location.href.replace('list', id);
+function removeTeacher(id) {
     $.ajax({
-        url: route,
+        url: `${ location.pathname }/${ id }`,
         type: 'DELETE',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),

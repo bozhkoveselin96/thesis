@@ -14,7 +14,7 @@ use App\Http\Requests\TeacherAccessRequest;
 class AdminController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the allowed emails.
      *
      */
     public function index() {
@@ -26,46 +26,33 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param User  $teacher
-     * @param TeacherAccessRequest $request
-     * @return UserResource
-     */
-
-    public function blockOrUnblockTeacher(User $teacher, TeacherAccessRequest $request): UserResource
-    {
-        $teacher->update($request->only('blocked'));
-        return new UserResource($teacher);
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly email address in allowed_emails.
      *
      * @param StoreEmailRequest $request
      * @return EmailResource
      */
-    public function creteEmail(StoreEmailRequest $request): EmailResource
+    public function store(StoreEmailRequest $request): EmailResource
     {
-        $email = Allow::create($request->only('email'));
+        $email = Allow::create($request->validated());
         return new EmailResource($email);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified email address in allowed_emails.
      *
      * @param Allow $email
      * @param StoreEmailRequest $request
      * @return EmailResource
      */
-    public function updateEmail(Allow $email, StoreEmailRequest $request): EmailResource
+    public function update(Allow $email, StoreEmailRequest $request): EmailResource
     {
-        $email->update($request->only('email'));
+        $email->update($request->validated());
         return new EmailResource($email);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove only email address or
+     * email address and teacher if the teacher exists.
      *
      * @param  Allow $email
      * @return Response
@@ -82,5 +69,19 @@ class AdminController extends Controller
             });
         }
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Update the specified teacher in users.
+     *
+     * @param User  $teacher
+     * @param TeacherAccessRequest $request
+     * @return UserResource
+     */
+
+    public function blockOrUnblockTeacher(User $teacher, TeacherAccessRequest $request): UserResource
+    {
+        $teacher->update($request->validated());
+        return new UserResource($teacher);
     }
 }
