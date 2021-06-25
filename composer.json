@@ -15,7 +15,7 @@
         "laravel/socialite": "^5.2",
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
-        "phpoffice/phpspreadsheet": "^1.17"
+        "phpoffice/phpspreadsheet": "^1.17",
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",

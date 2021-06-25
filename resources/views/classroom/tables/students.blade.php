@@ -6,9 +6,9 @@
     <thead>
     <tr>
         <th scope="col" class="d-none d-xl-table-cell">#</th>
-        <th scope="col" class="d-none d-xl-table-cell">Avatar</th>
-        <th scope="col" class="">Name</th>
-        <th scope="col" class="">Email</th>
+        <th scope="col" class="d-none d-xl-table-cell">Снимка</th>
+        <th scope="col" class="">Име</th>
+        <th scope="col" class="">Имейл</th>
     </tr>
     </thead>
     <tbody>

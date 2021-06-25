@@ -94,10 +94,10 @@ function _appendCourses(courses) {
                 '<td class="vertical-center is-breakable">'+ course.descriptionHeading +'</td>' +
                 '<td class="vertical-center d-none d-md-table-cell '+ course.courseState +'">'+ course.courseState +'</td>' +
                 '<td class="vertical-center d-none d-md-table-cell">' +
-                    '<a class="btn btn-outline-info btn-size" target="_blank" href="'+ course.alternateLink +'">Link</a>' +
+                    '<a class="btn btn-outline-info" target="_blank" href="'+ course.alternateLink +'">Link</a>' +
                 '</td>' +
                 '<td class="vertical-center">' +
-                    '<a class="btn btn-outline-success btn-size" href="/students/'+ course.id +'">Students</a>' +
+                    '<a class="btn btn-outline-success" href="/students/'+ course.id +'">Students</a>' +
                 '</td>' +
             '</tr>');
     }

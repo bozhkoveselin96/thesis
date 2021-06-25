@@ -2,11 +2,11 @@
     <thead>
     <tr>
         <th scope="col" class="d-none d-xl-table-cell">#</th>
-        <th scope="col" class="d-none d-md-table-cell">Name</th>
-        <th scope="col" class="">Email</th>
-        <th scope="col" class="d-none d-xl-table-cell">Avatar</th>
-        <th scope="col" class="d-none d-xl-table-cell">Status</th>
-        <th scope="col" class="">Access</th>
+        <th scope="col" class="d-none d-md-table-cell">Име</th>
+        <th scope="col" class="">Имейл</th>
+        <th scope="col" class="d-none d-xl-table-cell">Снимка</th>
+        <th scope="col" class="d-none d-xl-table-cell">Статус</th>
+        <th scope="col" class="">Достъп</th>
     </tr>
     </thead>
     <tbody>
@@ -30,15 +30,15 @@
             <td class="vertical-center">
                 @if(!$teacher->blocked)
                     <button id="current-value-{{ $teacher->id }}"
-                            class="btn btn-outline-danger btn-size"
+                            class="btn btn-outline-danger"
                             onclick="blockOrUnblock({{ $teacher->id }})"
-                            value="block">BLOCK
+                            value="block">БЛОКИРАЙ
                     </button>
                 @else
                     <button id="current-value-{{ $teacher->id }}"
-                            class="btn btn-outline-success btn-size"
+                            class="btn btn-outline-success"
                             onclick="blockOrUnblock({{ $teacher->id }})"
-                            value="unblock">UNBLOCK
+                            value="unblock">ОТБЛОКИРАЙ
                     </button>
                 @endif
             </td>

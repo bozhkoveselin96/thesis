@@ -22,7 +22,14 @@ function blockOrUnblock(id) {
             'Content-Type': 'application/json'
         },
         success: function (response) {
-            toastr.success(`You ${ access }ed successfully  ${ response.data.name }`);
+            switch (access) {
+                case 'block':
+                    toastr.success(`Успешно блокирахте ${ response.data.name }`);
+                    break;
+                case 'unblock':
+                    toastr.success(`Успешно отблокирахте ${ response.data.name }`);
+                    break;
+            }
             _changeButton(id, access);
         },
         error: function (response) {
@@ -39,7 +46,7 @@ function _changeButton(id, access) {
     switch (access) {
         case "block":
             currentBtn.val('unblock');
-            currentBtn.text('UNBLOCK');
+            currentBtn.text('ОТБЛОКИРАЙ');
             currentBtn.removeClass('btn-outline-danger');
             currentBtn.addClass('btn-outline-success');
             accessStatusIcon.removeClass('fa-check-circle');
@@ -49,7 +56,7 @@ function _changeButton(id, access) {
             break;
         case "unblock":
             currentBtn.val('block');
-            currentBtn.text('BLOCK');
+            currentBtn.text('БЛОКИРАЙ');
             currentBtn.removeClass('btn-outline-success');
             currentBtn.addClass('btn-outline-danger');
             accessStatusIcon.removeClass('fa-times-circle');

@@ -5,11 +5,11 @@
     <thead>
     <tr>
         <th scope="col" class="d-none d-xl-table-cell">#</th>
-        <th scope="col" class="">Name</th>
-        <th scope="col" class="">Description</th>
-        <th scope="col" class="d-none d-md-table-cell">Course State</th>
-        <th scope="col" class="d-none d-md-table-cell">Link to the course</th>
-        <th scope="col" class="">Students</th>
+        <th scope="col" class="">Име на курса</th>
+        <th scope="col" class="">Описание</th>
+        <th scope="col" class="d-none d-md-table-cell">Статус</th>
+        <th scope="col" class="d-none d-md-table-cell">Линк</th>
+        <th scope="col" class="">Студенти</th>
     </tr>
     </thead>
     <tbody>
@@ -20,11 +20,11 @@
             <td class="vertical-center is-breakable">{{ $course->descriptionHeading }}</td>
             <td class="vertical-center d-none d-md-table-cell {{ $course->courseState }}">{{ $course->courseState }}</td>
             <td class="vertical-center d-none d-md-table-cell">
-                <a class="btn btn-outline-info btn-size" target="_blank" href="{{ $course->alternateLink }}">Link</a>
+                <a class="btn btn-outline-info" target="_blank" href="{{ $course->alternateLink }}">Линк</a>
             </td>
             <td class="vertical-center">
-                <a class="btn btn-outline-success btn-size"
-                   href="{{ route('classroom.students', $course->id) }}">Students
+                <a class="btn btn-outline-success"
+                   href="{{ route('classroom.students', $course->id) }}">Студенти
                 </a>
             </td>
         </tr>

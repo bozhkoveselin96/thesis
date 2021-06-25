@@ -7,11 +7,11 @@ function openModal(modal, id = null) {
             submitBtn.off('click');
             let title = $('#create-or-update-modal-label');
             if (id !== null) {
-                title.text('UPDATE email');
-                submitBtn.text('UPDATE');
+                title.text('Промени имейл');
+                submitBtn.text('ПРОМЕНИ');
             } else {
-                title.text('Add email');
-                submitBtn.text('ADD');
+                title.text('Добави имейл');
+                submitBtn.text('ДОБАВИ');
             }
             $('#create-or-update-modal').modal('show');
             $('#modal-input-email').val(currentEmail);
@@ -29,7 +29,7 @@ function openModal(modal, id = null) {
             break;
         case 'remove':
             $('#remove-modal').modal('show');
-            $('#remove-modal-body').text(`Are you sure you want to remove ${ currentEmail } ?`);
+            $('#remove-modal-body').text(`Сигурни ли сте, че искате да изтриете ${ currentEmail } ?`);
             $('#remove').click(function () {
                 removeTeacher(id);
             });
@@ -66,7 +66,7 @@ function createOrUpdateEmail(id, newEmail, oldEmail, createOrUpdate) {
                 $('#update-or-create-btn').off('click');
                 $(`#email-${ id }`).text(newEmail);
                 $('#create-or-update-modal').modal('hide');
-                toastr.success(`Successfully update ${ oldEmail } to ${ newEmail }`);
+                toastr.success(`Успешно променихте ${ oldEmail } на ${ newEmail }`);
             },
             201: function () {
                 location.reload();

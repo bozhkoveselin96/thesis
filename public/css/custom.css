@@ -11,17 +11,13 @@
     vertical-align: middle !important;
 }
 
-.btn-size {
-    width: 100px;
-}
-
 .fa-times-circle, .fa-user-times {
     color: #dc3545;
     display: table;
     margin: 0 auto;
 }
 
-.fa-check-circle, .fa-user {
+.fa-check-circle, .fa-user-check {
     color: #28a745;
     display: table;
     margin: 0 auto;
@@ -75,6 +71,41 @@
     margin-bottom: 25px;
 }
 
+#welcome {
+    text-align: center;
+    color: #157a49;
+}
+
+.center-gif {
+    display: block;
+    margin: 0 auto;
+}
+
+.education {
+    width: 60%;
+}
+
+#arrow-gif {
+    width: 15%;
+}
+
+.bottom-space {
+    margin-bottom: 10px;
+}
+
+#education-gif-without-border {
+    border: 10px solid #07213d;
+}
+
+.guest-background {
+    height: 100vh;
+    width: 100%
+}
+
+.dropdown-menu-right-custom {
+    width: 300px;
+}
+
 @media only screen and (max-width: 1200px) {
     .unblocked-email {
         color: #28a745;
@@ -83,4 +114,13 @@
     .blocked-email {
         color: #dc3545;
     }
+
+    #education-gif-without-border {
+        border: 5px solid #07213d;
+    }
+
+    .dropdown-menu-right-custom {
+        width: auto;
+    }
 }
+

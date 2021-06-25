@@ -7,10 +7,10 @@
                 <div class="card">
                     <div id="card-header-emails" class="card-header">
                         <div class="align-self-center">
-                            {{ __('Allowed emails') }}
+                            Разрешени имейли
                         </div>
                         <div>
-                            <button class="btn btn-outline-success" onclick="openModal('create')">Add email</button>
+                            <button class="btn btn-outline-success" onclick="openModal('create')">Добави имейл</button>
                         </div>
                     </div>
                     <div class="card-body">
