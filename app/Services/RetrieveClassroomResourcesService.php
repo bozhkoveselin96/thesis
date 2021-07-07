@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Session;
 class RetrieveClassroomResourcesService
 {
     private array $students;
-    private array $classwork;
+    private array $courseWork;
+    private array $studentSubmissions;
 
     /**
      * @param GoogleClassroomService $service
@@ -15,11 +16,13 @@ class RetrieveClassroomResourcesService
      */
     public function __construct(GoogleClassroomService $service, string $courseId)
     {
-        $students = $this->getStudents($service, $courseId);
-        $classwork = $this->getClasswork($service, $courseId);
-        $this->setClasswork($classwork);
-        $this->setStudents($students);
         $this->setTargetTopic($service, $courseId);
+        $students = $this->getStudents($service, $courseId);
+        $courseWork = $this->getCourseWork($service, $courseId);
+        $studentSubmissions = $this->getStudentSubmissions($service, $courseId, $students, $courseWork);
+        $this->setCourseWork($courseWork);
+        $this->setStudents($students);
+        $this->setStudentSubmission($studentSubmissions);
     }
 
     /**
@@ -62,22 +65,63 @@ class RetrieveClassroomResourcesService
     }
 
     /**
-     * Retrieve all classWork from current course
+     * Retrieve all courseWork from current course
      *
      * @param GoogleClassroomService $service
      * @param string $courseId
      * @return array
      */
-    private function getClasswork(GoogleClassroomService $service, string $courseId): array
+    private function getCourseWork(GoogleClassroomService $service, string $courseId): array
     {
         $optParams = [
             'fields' => 'courseWork(userId,profile/name/fullName,profile/emailAddress)'
         ];
-        return $service
+        $allCourseWork = $service
             ->getClassroom()
             ->courses_courseWork
             ->listCoursesCourseWork($courseId)
             ->getCourseWork();
+
+        foreach ($allCourseWork as $id => $courseWork) {
+            if ($courseWork->topicId !== Session::get('topicId')) {
+                unset($allCourseWork[$id]);
+            }
+        }
+        return $allCourseWork;
+    }
+
+    /**
+     * Retrieve
+     *
+     * @param GoogleClassroomService $service
+     * @param string $courseId
+     * @param array $students
+     * @param array $allCourseWork
+     * @return array
+     */
+    public function getStudentSubmissions(GoogleClassroomService $service, string $courseId, array $students, array $allCourseWork)
+    {
+        $optParams = [
+//            'states' => 'TURNED_IN',
+            'fields' => 'studentSubmissions(submissionHistory)'
+        ];
+
+        $history = [];
+        foreach ($allCourseWork as $courseWork) {
+            $submissions = $service->getClassroom()
+                ->courses_courseWork_studentSubmissions
+                ->listCoursesCourseWorkStudentSubmissions($courseId, $courseWork->id, $optParams)
+                ->getStudentSubmissions();
+            foreach ($submissions[0]->getSubmissionHistory() as $submission) {
+                $history[] = $submission->getStateHistory();
+//                if ($submission->getStateHistory()->state === 'TURNED_IN') {
+//                    $history['id'] = $courseWork->id;
+//                    $history['date'] = $submission->getStateHistory()->stateTimestamp;
+//                    break;
+//                }
+            }
+        }
+        dd($history);
     }
 
     /**
@@ -89,27 +133,37 @@ class RetrieveClassroomResourcesService
     }
 
     /**
-     * @param array $classwork
+     * @param array $courseWork
      */
-    private function setClasswork(array $classwork): void
+    private function setCourseWork(array $courseWork): void
     {
-        $this->classwork = $classwork;
+        $this->courseWork = $courseWork;
+    }
+
+    /**
+     * @param array $studentSubmissions
+     */
+    public function setStudentSubmission(array $studentSubmissions): void
+    {
+        $this->studentSubmissions = $studentSubmissions;
     }
 
     public function getRoster(): array
     {
         $allStudents = $this->students;
         $finalRoster = [];
-        foreach ($this->classwork as $currentClasswork) {
+        foreach ($this->courseWork as $currentCourseWork) {
+            $dueDate = $currentCourseWork->dueDate;
+            $currentDueDate = $dueDate->day . '/' . $dueDate->month . '/'  . $dueDate->year;
             foreach ($allStudents as $id => $currentStudent) {
-                if ($currentClasswork->topicId === Session::get('topicId') &&
-                    $currentClasswork->individualStudentsOptions &&
-                    $currentClasswork->individualStudentsOptions->studentIds[0] === $currentStudent->userId) {
+                if ($currentCourseWork->topicId === Session::get('topicId') &&
+                    $currentCourseWork->individualStudentsOptions &&
+                    $currentCourseWork->individualStudentsOptions->studentIds[0] === $currentStudent->userId) {
                         $studentWithAssignment = new \stdClass();
                         $studentWithAssignment->number = null;
                         $studentWithAssignment->fullName = $currentStudent->profile->name->fullName;
-                        if ($currentClasswork->description) {
-                            $studentAdditionalInfo = preg_split("/[\t]/", $currentClasswork->description);
+                        if ($currentCourseWork->description) {
+                            $studentAdditionalInfo = preg_split("/[\t]/", $currentCourseWork->description);
                             if (count($studentAdditionalInfo) === config('services.google.classroom_course_work_correct_description')) {
                                 $studentWithAssignment->fullName = $studentAdditionalInfo[0];
                                 $studentWithAssignment->studentNumber = $studentAdditionalInfo[2];
@@ -120,7 +174,8 @@ class RetrieveClassroomResourcesService
                             }
                         }
                         $studentWithAssignment->emailAddress = $currentStudent->profile->emailAddress;
-                        $studentWithAssignment->assignedTopic = $currentClasswork->title;
+                        $studentWithAssignment->assignedTopic = $currentCourseWork->title;
+                        $studentWithAssignment->dueDate = $currentDueDate;
                         $finalRoster[] = $studentWithAssignment;
                         unset($allStudents[$id]);
                         break;
@@ -132,7 +187,7 @@ class RetrieveClassroomResourcesService
     }
 
     /**
-     * The service returns all the topics we extract with the method getClasswork().
+     * The service returns all the topics we extract with the method getCourseWork().
      * In the Excel file, we only require a specific topic, so we keep the ID we need.
      *
      * @param GoogleClassroomService $service

@@ -67,10 +67,10 @@ class LoginController extends Controller
         $user = Socialite::driver('google')->user();
         if ($this->registerOrLoginUser($user)) {
             // Return home after login.
-            Toastr::success('Congratulations, ' . $user->getName() . '. You have successfully entered our application.', 'Success', ["positionClass" => "toast-top-right"]);
+            Toastr::success('Поздравления, ' . $user->getName() . '. Успешно влезнахте в Classroom helper.', 'Success', ["positionClass" => "toast-top-right"]);
             return redirect()->route('home');
         }
-        Toastr::error('You are not allowed to enter!', 'Error', ["positionClass" => "toast-top-right"]);
+        Toastr::error('Нямате достъп до Classroom helper!', 'Error', ["positionClass" => "toast-top-right"]);
         return redirect()->route('main');
     }
 
