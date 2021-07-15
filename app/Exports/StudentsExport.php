@@ -43,7 +43,8 @@ class StudentsExport implements FromCollection, WithHeadings, ShouldQueue
             'Група',
             'Имейл',
             'Реферат',
-            'Краен срок'
+            'Краен срок',
+            'Дата на предаване'
         ];
     }
 }
