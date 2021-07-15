@@ -38,11 +38,13 @@ class StudentsExport implements FromCollection, WithHeadings, ShouldQueue
     {
         return [
             '№',
-            'Name',
-            'F№',
-            'Group',
-            'Email',
-            'Assigned topic'
+            'Име',
+            'фак.№',
+            'Група',
+            'Имейл',
+            'Реферат',
+            'Краен срок',
+            'Дата на предаване'
         ];
     }
 }

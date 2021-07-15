@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Brian2694\Toastr\Toastr;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Exports\StudentsExport;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +16,7 @@ use Google\Exception as GoogleException;
 use App\Services\RetrieveClassroomResourcesService;
 use Illuminate\Contracts\Foundation\Application;
 use Google_Service_Classroom_ListStudentsResponse;
+use PhpOffice\PhpSpreadsheet\Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use PhpOffice\PhpSpreadsheet\Exception as PhpOfficeException;
 use PhpOffice\PhpSpreadsheet\Writer\Exception as PhpOfficeWriterException;
@@ -121,18 +124,20 @@ class ClassroomController extends Controller
      *
      * @param Request $request
      * @param string $courseId
-     * @return BinaryFileResponse
+     * @return BinaryFileResponse|RedirectResponse
      * @throws GoogleException
      */
-    public function export(Request $request, string $courseId): BinaryFileResponse
+    public function export(Request $request, string $courseId)
     {
         $classroomService = new GoogleClassroomService($request);
         $retrieveService = new RetrieveClassroomResourcesService($classroomService, $courseId);
+
         $students = $retrieveService->getRoster();
         try {
             return Excel::download(new StudentsExport($students), "students-$courseId.xlsx");
         } catch (PhpOfficeWriterException | PhpOfficeException $exception) {
-            dd($exception);
+            Toastr::error('Нещо се обърка при експорта!');
+            return redirect()->route('classroom.students', [$courseId]);
         }
     }
 
